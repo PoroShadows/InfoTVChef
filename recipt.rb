@@ -5,8 +5,7 @@ end
 
 # Chef
 # Update apt
-# apt_update
-execute 'sudo apt-get update'
+execute 'apt-get update'
 
 # Instal packages
 apt_package 'omxplayer'
@@ -16,24 +15,21 @@ apt_package 'python-imaging-tk'
 apt_package 'unclutter'
 apt_package 'mplayer'
 apt_package 'uzbl'
+apt_package 'wget'
 
 # Execute scripts
-execute "sudo curl https://yt-dl.org/downloads/2016.04.13/youtube-dl -o /usr/local/bin/youtube-dl"
-execute "sudo chmod a+rx /usr/local/bin/youtube-dl"
-execute 'sh /home/pi/InfoTVChef/clone-git-repo.sh'
-execute 'sudo sh /home/pi/InfoTVChef/add-lines.sh "python /home/pi/pipresents/pipresents.py -f -b -p fria_infotv_1p3" /home/pi/.config/lxsession/LXDE-pi/autostart'
+execute "curl https://yt-dl.org/downloads/2016.04.13/youtube-dl -o /usr/local/bin/youtube-dl"
+execute "chmod a+rx /usr/local/bin/youtube-dl"
+execute 'wget https://github.com/KenT2/pipresents-gapless/tarball/master -O - | tar xz'
 
-# Experimantal. Not tested.
+# Make cron jobs
 cron 'network-login' do
   minute '0'
   command 'python /home/pi/FriaInfoTV/infotv-network.py Guest fria123'
 end
 
-apt_package 'wget'
-
-execute 'wget https://github.com/KenT2/pipresents-gapless/tarball/master -O - | tar xz'
-
-if directory_exists('/home/pi/FriaInfoTV')
+# Git cloning and updating
+if directory_exists?('/home/pi/FriaInfoTV')
   git 'FriaInfoTV-repo' do
     repository 'https://github.com/dahnielson/FriaInfoTV'
     destination '/home/pi/FriaInfoTV'
@@ -47,6 +43,7 @@ else
   end
 end
 
+# Create lines so that pipresents starts automatically
 bash 'add-lines' do
   code <<-EOH
     if grep -q "python /home/pi/pipresents/pipresents.py -f -b -p fria_infotv_1p3" /home/pi/.config/lxsession/LXDE-pi/autostart; then
