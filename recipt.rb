@@ -1,14 +1,10 @@
-# execute 'sudo apt-get update' do
-# end
+# Update apt
+execute 'sudo apt-get update' do
+end
 
+# Instal packages
 apt_package 'omxplayer' do
   action :install
-end
-
-execute "sudo curl https://yt-dl.org/downloads/2016.04.13/youtube-dl -o /usr/local/bin/youtube-dl" do
-end
-
-execute "sudo chmod a+rx /usr/local/bin/youtube-dl" do
 end
 
 apt_package 'python3.4' do
@@ -33,6 +29,13 @@ end
 
 apt_package 'uzbl' do
   action :install
+end
+
+# Execute scripts
+execute "sudo curl https://yt-dl.org/downloads/2016.04.13/youtube-dl -o /usr/local/bin/youtube-dl" do
+end
+
+execute "sudo chmod a+rx /usr/local/bin/youtube-dl" do
 end
 
 execute 'sh /home/pi/InfoTVChef/clone-git-repo.sh' do
